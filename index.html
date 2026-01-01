@@ -55,6 +55,7 @@
     </main>
 
     <script>
+        // Menggunakan URL yang anda berikan di atas
         const API_URL = 'https://script.google.com/macros/s/AKfycbym2bXGuNwIhFXqfLB7dIChvRF4mKyiTUGMc8xeTDyfP1nxaHUclt9hpHt3vAjjhUZ-eg/exec';
 
         async function muatData() {
@@ -62,12 +63,13 @@
             const selectItem = document.getElementById('item');
             
             try {
+                // Memanggil parameter action 'getData' seperti sistem Limau anda
                 const res = await fetch(`${API_URL}?action=getData`);
                 const data = await res.json();
                 
-                // Pastikan 'stok' wujud dalam JSON (ikut skrip Code.gs anda)
+                // data.stok datang dari return JSON Google Script anda
                 if (!data.stok || data.stok.length === 0) {
-                    display.innerHTML = '<p class="text-center text-slate-400 py-4">Tiada data stok ditemui.</p>';
+                    display.innerHTML = '<p class="text-center text-slate-400 py-4">Tiada data dalam tab "daging-stok".</p>';
                     return;
                 }
 
@@ -75,9 +77,9 @@
                 let selectHtml = '';
                 
                 data.stok.forEach(row => {
-                    const nama = row[0];
-                    const harga = row[1];
-                    const baki = parseFloat(row[3]);
+                    const nama = row[0]; // Kolum A
+                    const harga = row[1]; // Kolum B
+                    const baki = parseFloat(row[3]); // Kolum D
                     const adaStok = baki > 0;
                     
                     stokHtml += `
@@ -86,7 +88,7 @@
                             <p class="font-bold text-slate-800 text-sm">${nama}</p>
                             <p class="text-red-600 font-bold text-xs">RM ${harga} /KG</p>
                         </div>
-                        <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-tighter ${adaStok ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black ${adaStok ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
                             ${adaStok ? baki + ' KG' : 'HABIS'}
                         </span>
                     </div>`;
@@ -97,10 +99,10 @@
                 });
 
                 display.innerHTML = stokHtml;
-                selectItem.innerHTML = selectHtml || '<option disabled>Stok Habis</option>';
+                selectItem.innerHTML = selectHtml || '<option disabled>Tiada Stok</option>';
 
             } catch (err) {
-                display.innerHTML = '<div class="p-4 bg-red-50 text-red-600 text-xs rounded-xl font-bold">RALAT: Data gagal dibaca dari Sheets. Semak tab "daging-stok".</div>';
+                display.innerHTML = '<div class="p-4 bg-red-50 text-red-600 text-xs rounded-xl font-bold">RALAT: Sambungan gagal. Sila semak tab "daging-stok" anda.</div>';
             }
         }
 
@@ -121,14 +123,14 @@
             try {
                 await fetch(API_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
+                    mode: 'no-cors', // Standard untuk GAS
                     body: JSON.stringify(payload)
                 });
-                alert('Berjaya! Tempahan anda telah direkodkan.');
+                alert('Alhamdulillah! Tempahan anda telah direkodkan.');
                 document.getElementById('formTempahan').reset();
                 muatData();
             } catch (err) {
-                alert('Berlaku ralat semasa menghantar.');
+                alert('Berlaku ralat. Sila cuba lagi.');
             } finally {
                 btn.disabled = false;
                 btn.innerText = "HANTAR TEMPAHAN";
