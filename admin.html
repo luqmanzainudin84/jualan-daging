@@ -3,61 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Daging</title>
+    <title>Admin Panel Daging</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-gray-100 p-6">
-    <div class="max-w-4xl mx-auto">
-        <header class="flex justify-between items-center mb-8 border-b border-gray-800 pb-6">
+<body class="bg-gray-950 text-gray-200 p-4 md:p-10">
+    <div class="max-w-5xl mx-auto">
+        <header class="flex justify-between items-center mb-10">
             <div>
-                <h1 class="text-2xl font-black text-red-500 uppercase tracking-tighter">Panel Kawalan</h1>
-                <p class="text-xs text-gray-500 uppercase tracking-widest">Master Data ID: 11FpenLRT...</p>
+                <h1 class="text-2xl font-black text-red-500 uppercase tracking-tighter">Admin Dashboard</h1>
+                <p class="text-[10px] text-gray-500 font-mono">Database: 11FpenLRT...UD7So</p>
             </div>
-            <button onclick="location.reload()" class="bg-gray-800 hover:bg-gray-700 px-5 py-2 rounded-xl text-xs font-bold border border-gray-700 transition-all">REFRESH DATA</button>
+            <button onclick="location.reload()" class="bg-gray-800 px-4 py-2 rounded-lg text-xs font-bold border border-gray-700">REFRESH ALL</button>
         </header>
 
-        <div class="grid gap-4" id="admin-stok">
-            <p class="text-center py-20 animate-pulse text-gray-600 italic font-medium">Menyambung ke pangkalan data...</p>
+        <h2 class="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">Pengurusan Stok</h2>
+        <div id="admin-stok" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12"></div>
+
+        <h2 class="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">Senarai Tempahan (10 Terkini)</h2>
+        <div class="bg-gray-900 rounded-3xl border border-gray-800 overflow-hidden shadow-2xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-gray-800 text-gray-400 uppercase text-[10px]">
+                        <tr>
+                            <th class="p-5">Pelanggan</th>
+                            <th class="p-5">Item</th>
+                            <th class="p-5 text-center">Berat</th>
+                            <th class="p-5 text-center">Tindakan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jadual-tempahan" class="divide-y divide-gray-800"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbym2bXGuNwIhFXqfLB7dIChvRF4mKyiTUGMc8xeTDyfP1nxaHUclt9hpHt3vAjjhUZ-eg/exec';
+        const API_URL = 'GANTI_DENGAN_URL_WEB_APP_ANDA';
 
         async function muatAdmin() {
-            const container = document.getElementById('admin-stok');
             try {
                 const res = await fetch(API_URL);
-                const data = await res.json();
+                const result = await res.json();
                 
-                container.innerHTML = data.map((row, index) => `
-                    <div class="bg-gray-800 p-5 rounded-2xl border border-gray-700 flex flex-col md:flex-row justify-between items-center gap-6 shadow-2xl">
-                        <div class="flex-1">
-                            <h3 class="text-xl font-black text-white">${row[0]}</h3>
-                            <span class="text-[10px] bg-gray-900 px-2 py-1 rounded text-gray-500 font-mono">ID: ROW_${index + 2}</span>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4 w-full md:w-auto">
-                            <div class="bg-gray-900 p-4 rounded-2xl border border-gray-700">
-                                <label class="block text-[10px] text-gray-500 font-bold mb-1">HARGA/KG</label>
-                                <div class="text-lg font-black text-red-400">RM ${row[1]}</div>
-                            </div>
-                            <div class="bg-gray-900 p-4 rounded-2xl border border-gray-700">
-                                <label class="block text-[10px] text-gray-500 font-bold mb-1">BAKI STOK</label>
-                                <div class="text-lg font-black ${parseFloat(row[3]) > 0 ? 'text-green-400' : 'text-red-500'}">${row[3]} KG</div>
-                            </div>
-                        </div>
-
-                        <div class="w-full md:w-auto">
-                            <a href="https://docs.google.com/spreadsheets/d/11FpenLRTpP95MClKwAz3uG9Fr4iqbUJCBmdVl6UD7So/edit" target="_blank" class="block text-center bg-blue-600 hover:bg-blue-500 px-6 py-4 rounded-2xl font-bold text-xs shadow-lg shadow-blue-900/40 transition-all">
-                                EDIT DI SHEETS
-                            </a>
+                // Paparan Stok Admin
+                document.getElementById('admin-stok').innerHTML = result.stok.map(row => `
+                    <div class="bg-gray-900 p-5 rounded-2xl border border-gray-800">
+                        <p class="text-gray-500 font-bold text-[10px] uppercase mb-1">${row[0]}</p>
+                        <div class="flex justify-between items-end">
+                            <span class="text-xl font-black text-white">${row[3]} KG</span>
+                            <span class="text-red-500 font-bold text-xs">RM ${row[1]}</span>
                         </div>
                     </div>
                 `).join('');
-            } catch (e) {
-                container.innerHTML = `<div class="bg-red-900/20 p-6 rounded-2xl border border-red-900 text-red-400 font-bold text-center">Ralat: Gagal memuat data. Sila semak Apps Script.</div>`;
-            }
+
+                // Paparan Jadual Tempahan
+                document.getElementById('jadual-tempahan').innerHTML = result.log.map(row => `
+                    <tr class="hover:bg-gray-800/50 transition">
+                        <td class="p-5">
+                            <p class="font-bold text-white text-sm">${row[1]}</p>
+                            <p class="text-blue-500 font-mono text-[10px]">${row[2]}</p>
+                        </td>
+                        <td class="p-5 font-medium text-gray-300">${row[3]}</td>
+                        <td class="p-5 text-center font-black text-green-400 text-sm">${row[4]} KG</td>
+                        <td class="p-5 text-center">
+                            <a href="https://wa.me/6${row[2].replace(/\D/g,'')}" target="_blank" class="bg-green-600/20 text-green-400 px-3 py-1 rounded-full text-[10px] font-bold border border-green-600/30">WhatsApp</a>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error("Ralat Admin"); }
         }
         muatAdmin();
     </script>
