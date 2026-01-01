@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daging Segar 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap'); body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
 <body class="bg-slate-50 pb-12">
     <div class="bg-red-700 text-white pt-10 pb-20 px-6 rounded-b-[3rem] text-center shadow-lg">
         <h1 class="text-3xl font-extrabold italic uppercase">🥩 Segar Dari Ladang</h1>
-        <p class="opacity-80 text-xs mt-1 tracking-widest">TEMPAHAN RAYA HAJI 2026</p>
+        <p class="opacity-80 text-xs mt-1 tracking-widest uppercase">Sembelihan Raya Haji 2026</p>
     </div>
 
     <main class="max-w-md mx-auto px-4 -mt-12 space-y-6">
@@ -19,7 +18,7 @@
                 <span>💰 Harga & Stok</span>
                 <button onclick="muatData()" class="text-[10px] bg-red-50 text-red-600 px-3 py-1 rounded-full font-bold">REFRESH</button>
             </h2>
-            <div id="senarai-stok" class="space-y-2"></div>
+            <div id="senarai-stok" class="space-y-2 italic text-center text-slate-400 py-4">Memuatkan data...</div>
         </div>
 
         <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
@@ -36,23 +35,24 @@
         </div>
 
         <div class="bg-slate-800 p-6 rounded-3xl shadow-xl text-white">
-            <h2 class="text-sm font-bold mb-4 flex items-center gap-2 italic">
+            <h2 class="text-xs font-bold mb-4 flex items-center gap-2 italic uppercase">
                 <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>
-                Tempahan Terkini (Real-time)
+                Log Tempahan Terkini
             </h2>
-            <div id="log-belian" class="space-y-3 text-[11px]"></div>
+            <div id="log-belian" class="space-y-3 text-[11px] opacity-90">
+                <p class="italic opacity-50">Menunggu data baru...</p>
+            </div>
         </div>
     </main>
 
     <script>
-        const API_URL = 'URL_WEB_APP_ANDA'; // Ganti dengan URL Deploy anda
+        const API_URL = 'https://script.google.com/macros/s/AKfycbym2bXGuNwIhFXqfLB7dIChvRF4mKyiTUGMc8xeTDyfP1nxaHUclt9hpHt3vAjjhUZ-eg/exec';
 
         async function muatData() {
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
                 
-                // Paparan Stok
                 let stokHtml = ''; let optHtml = '';
                 data.forEach(row => {
                     const baki = parseFloat(row[3]) || 0;
@@ -65,16 +65,19 @@
                 document.getElementById('senarai-stok').innerHTML = stokHtml;
                 document.getElementById('item').innerHTML = optHtml;
 
-                // Log Belian (Contoh simulasi dari data)
-                document.getElementById('log-belian').innerHTML = data.slice(0,3).map(r => `
-                    <div class="border-b border-slate-700 pb-2">✅ Pelanggan baru menempah <span class="text-yellow-400 font-bold">${r[0]}</span></div>
+                // Log Belian (Paparkan 4 baris pertama sebagai simulasi log)
+                document.getElementById('log-belian').innerHTML = data.slice(0,4).map(r => `
+                    <div class="border-b border-slate-700 pb-2 flex justify-between">
+                        <span>✅ Seseorang menempah <b>${r[0]}</b></span>
+                        <span class="opacity-50 text-[9px]">Baru sahaja</span>
+                    </div>
                 `).join('');
             } catch (e) { console.log("Ralat Data"); }
         }
 
         document.getElementById('formOrder').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnHantar'); btn.disabled = true; btn.innerText = "PROSES...";
+            const btn = document.getElementById('btnHantar'); btn.disabled = true; btn.innerText = "SEDANG DIPROSES...";
             const payload = { 
                 nama: document.getElementById('nama').value, 
                 whatsapp: document.getElementById('whatsapp').value,
@@ -83,7 +86,7 @@
             };
             try {
                 await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                alert('Tempahan Berjaya!');
+                alert('Alhamdulillah! Tempahan anda telah direkodkan.');
                 location.reload();
             } catch (err) { alert('Sila cuba lagi'); btn.disabled = false; }
         });
