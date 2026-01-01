@@ -5,144 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jualan Daging Raya</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .card-daging { transition: all 0.2s ease; border-left-width: 4px; }
-        .card-daging:active { transform: scale(0.98); }
-    </style>
 </head>
 <body class="bg-gray-100 pb-10">
-
     <header class="bg-red-700 text-white p-6 rounded-b-3xl shadow-lg mb-6 text-center">
         <h1 class="text-2xl font-bold">🥩 Jualan Daging Raya</h1>
-        <p class="text-sm opacity-90">Sembelihan Raya Haji 2026</p>
+        <p class="text-sm">Sembelihan Raya Haji 2026</p>
     </header>
 
     <main class="max-w-md mx-auto px-4">
-        <section class="mb-8">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-bold text-gray-800">Senarai Stok & Harga</h2>
-                <button onclick="muatTurunStok()" class="text-sm text-red-600 font-bold bg-white px-3 py-1 rounded-full shadow-sm active:bg-gray-100">Refresh</button>
-            </div>
-            
-            <div id="senarai-stok" class="space-y-3">
-                <div class="text-center py-10">
-                    <p class="text-gray-500 animate-pulse italic">Memuatkan data stok...</p>
-                </div>
-            </div>
-        </section>
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-bold text-gray-800">Senarai Stok & Harga</h2>
+            <button onclick="muatTurunStok()" class="text-sm text-red-600 font-bold bg-white px-3 py-1 rounded-full shadow-sm">Refresh</button>
+        </div>
+        
+        <div id="senarai-stok" class="space-y-3 mb-8">
+            <div class="text-center py-10 text-gray-500 italic">Memuatkan data...</div>
+        </div>
 
-        <section class="bg-white p-6 rounded-2xl shadow-md border border-gray-200">
-            <h2 class="text-lg font-bold mb-6 text-gray-800">📝 Borang Tempahan</h2>
+        <section class="bg-white p-6 rounded-2xl shadow-md border">
+            <h2 class="text-lg font-bold mb-6">📝 Borang Tempahan</h2>
             <form id="orderForm" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nama Penuh</label>
-                    <input type="text" id="nama" class="w-full p-3 rounded-xl border bg-gray-50 outline-none focus:border-red-500 text-black" placeholder="Contoh: Ahmad" required>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">No. WhatsApp</label>
-                    <input type="tel" id="whatsapp" class="w-full p-3 rounded-xl border bg-gray-50 outline-none focus:border-red-500 text-black" placeholder="0123456789" required>
-                </div>
-
+                <input type="text" id="nama" class="w-full p-3 rounded-xl border" placeholder="Nama Penuh" required>
+                <input type="tel" id="whatsapp" class="w-full p-3 rounded-xl border" placeholder="0123456789" required>
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Pilih Daging</label>
-                        <select id="item" class="w-full p-3 rounded-xl border bg-gray-50 outline-none focus:border-red-500 text-black">
-                            <option>Daging batang p</option>
-                            <option>Daging biasa</option>
-                            <option>Tulang</option>
-                            <option>Paru</option>
-                            <option>Limpa</option>
-                            <option>Hati</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Berat (KG)</label>
-                        <input type="number" id="berat" step="0.5" min="0.5" class="w-full p-3 rounded-xl border bg-gray-50 outline-none focus:border-red-500 text-black" placeholder="1.0" required>
-                    </div>
+                    <select id="item" class="w-full p-3 rounded-xl border">
+                        <option>Daging batang p</option>
+                        <option>Daging biasa</option>
+                        <option>Tulang</option>
+                        <option>Paru</option>
+                        <option>Limpa</option>
+                        <option>Hati</option>
+                    </select>
+                    <input type="number" id="berat" step="0.5" class="w-full p-3 rounded-xl border" placeholder="Berat (KG)" required>
                 </div>
-
-                <button type="submit" id="btnSubmit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95 mt-4">
-                    Hantar Tempahan
-                </button>
+                <button type="submit" id="btnSubmit" class="w-full bg-red-600 text-white font-bold py-4 rounded-xl shadow-lg">Hantar Tempahan</button>
             </form>
         </section>
     </main>
 
     <script>
-        // URL WEB APP ANDA (VERSI 6)
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbym2bXGuNwIhFXqfLB7dIChvRF4mKyiTUGMc8xeTDyfP1nxaHUclt9hpHt3vAjjhUZ-eg/exec';
 
         async function muatTurunStok() {
             const container = document.getElementById('senarai-stok');
             try {
-                // Menghantar sebagai text/plain untuk mengelakkan isu CORS Preflight di sesetengah browser
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', 
-                    body: JSON.stringify({ action: 'get_stok_daging' })
-                });
-
-                // Memandangkan 'no-cors' tidak membenarkan pembacaan response secara terus, 
-                // kita gunakan cara fetch alternatif yang lebih stabil untuk Google Apps Script:
-                const responseData = await fetch(SCRIPT_URL + "?action=get_stok_daging");
-                const data = await responseData.json();
+                // Guna kaedah GET untuk elak isu sambungan
+                const response = await fetch(`${SCRIPT_URL}?action=get_stok_daging`);
+                const data = await response.json();
                 
                 let html = '';
-                if (!data || data.length === 0) {
-                    html = '<div class="text-center text-gray-500 bg-white p-4 rounded-xl shadow-sm italic text-sm">Tiada stok didaftarkan.</div>';
-                } else {
-                    data.forEach(item => {
-                        const nama = item[0]; // Kolum A
-                        const harga = item[1]; // Kolum B
-                        const baki = item[3]; // Kolum D
-                        const adaStok = baki > 0;
-
-                        html += `
-                            <div class="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center card-daging ${adaStok ? 'border-green-500' : 'border-red-500'}">
-                                <div>
-                                    <h3 class="font-bold text-gray-800">${nama}</h3>
-                                    <p class="text-red-600 font-bold text-sm">RM ${harga} /KG</p>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-[10px] font-extrabold px-2 py-1 rounded-full uppercase tracking-tight ${adaStok ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                                        ${adaStok ? 'Baki: ' + baki + 'kg' : 'HABIS'}
-                                    </span>
-                                </div>
-                            </div>`;
-                    });
-                }
-                container.innerHTML = html;
+                data.forEach(item => {
+                    const adaStok = item[3] > 0;
+                    html += `
+                        <div class="bg-white p-4 rounded-xl shadow-sm flex justify-between border-l-4 ${adaStok ? 'border-green-500' : 'border-red-500'}">
+                            <div>
+                                <h3 class="font-bold text-gray-800">${item[0]}</h3>
+                                <p class="text-red-600 font-bold text-sm">RM ${item[1]} /KG</p>
+                            </div>
+                            <span class="text-[10px] font-extrabold px-2 py-1 rounded-full ${adaStok ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                                ${adaStok ? 'Baki: ' + item[3] + 'kg' : 'HABIS'}
+                            </span>
+                        </div>`;
+                });
+                container.innerHTML = html || '<p class="text-center text-gray-500">Tiada stok.</p>';
             } catch (err) {
-                console.error(err);
-                container.innerHTML = `
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 text-center">
-                        <p class="text-red-600 text-xs font-bold">RALAT: Sambungan gagal.</p>
-                        <p class="text-[10px] text-red-400 mt-1 italic">Sila pastikan anda telah "Deploy" skrip sebagai "Anyone" dan tab "daging-stok" mengandungi data.</p>
-                    </div>`;
+                container.innerHTML = '<div class="bg-red-50 p-4 rounded-xl border border-red-200 text-center text-red-600 text-xs font-bold">RALAT: Gagal tarik data dari Sheets.</div>';
             }
         }
 
         document.getElementById('orderForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = document.getElementById('btnSubmit');
-            const originalText = btn.innerText;
-            btn.innerText = "Menghantar...";
-            btn.disabled = true;
-
-            const formData = new FormData();
-            formData.append('action', 'add_order_daging');
-            formData.append('nama', document.getElementById('nama').value);
-            formData.append('whatsapp', document.getElementById('whatsapp').value);
-            formData.append('item', document.getElementById('item').value);
-            formData.append('berat', document.getElementById('berat').value);
+            btn.innerText = "Menghantar..."; btn.disabled = true;
 
             try {
-                // Menggunakan query params untuk kestabilan penghantaran ke Apps Script
-                const queryParams = new URLSearchParams(new FormData(document.getElementById('orderForm'))).toString();
-                const postUrl = `${SCRIPT_URL}?action=add_order_daging&nama=${encodeURIComponent(payload.nama)}&whatsapp=${encodeURIComponent(payload.whatsapp)}&item=${encodeURIComponent(payload.item)}&berat=${encodeURIComponent(payload.berat)}`;
-                
-                // Cara paling stabil untuk POST dari browser ke GAS
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -154,15 +90,12 @@
                         berat: document.getElementById('berat').value
                     })
                 });
-
-                alert('Alhamdulillah! Tempahan anda telah dihantar. Sila semak Google Sheets anda.');
+                alert('Tempahan berjaya dihantar!');
                 document.getElementById('orderForm').reset();
             } catch (err) {
-                alert('Berjaya dihantar (Nota: Google Script mungkin tidak memulangkan respon tetapi data biasanya masuk). Semak Sheets anda.');
-                document.getElementById('orderForm').reset();
+                alert('Berjaya dihantar (Response hidden).');
             } finally {
-                btn.innerText = originalText;
-                btn.disabled = false;
+                btn.innerText = "Hantar Tempahan"; btn.disabled = false;
             }
         });
 
