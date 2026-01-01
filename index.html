@@ -5,78 +5,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daging Raya App</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        .card-daging { transition: transform 0.2s; }
-        .card-daging:active { transform: scale(0.95); }
+        body { font-family: 'Inter', sans-serif; }
+        .card-daging { transition: all 0.2s ease; }
+        .card-daging:active { transform: scale(0.98); }
+        .loading-shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
     </style>
 </head>
-<body class="bg-gray-50 pb-20">
+<body class="bg-gray-50 pb-10">
 
-    <header class="bg-red-700 text-white p-6 rounded-b-3xl shadow-lg mb-6">
-        <h1 class="text-2xl font-bold text-center">🥩 Jualan Daging Raya</h1>
-        <p class="text-center text-sm opacity-90">Tempah awal untuk raya yang lebih mudah!</p>
+    <header class="bg-red-700 text-white p-6 rounded-b-[2rem] shadow-xl mb-6">
+        <div class="max-w-md mx-auto text-center">
+            <h1 class="text-3xl font-bold tracking-tight">🥩 Jualan Daging</h1>
+            <p class="text-red-100 mt-1 opacity-90">Sembelihan Raya Haji 2026</p>
+        </div>
     </header>
 
     <main class="max-w-md mx-auto px-4">
-        <h2 class="text-lg font-bold mb-4 flex items-center">
-            <span class="mr-2">📦</span> Senarai Stok & Harga
-        </h2>
-        
-        <div id="senarai-stok" class="grid grid-cols-1 gap-4">
-            <p class="text-center text-gray-500 py-4">Memuatkan data stok...</p>
-        </div>
+        <section class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-gray-800">Senarai Stok & Harga</h2>
+                <button onclick="muatTurunStok()" class="text-sm text-red-600 font-semibold">Refresh</button>
+            </div>
+            
+            <div id="senarai-stok" class="space-y-3">
+                <div class="h-20 loading-shimmer rounded-xl"></div>
+                <div class="h-20 loading-shimmer rounded-xl"></div>
+            </div>
+        </section>
 
-        <hr class="my-8 border-gray-200">
-
-        <section id="tempahan" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h2 class="text-lg font-bold mb-4">📝 Borang Tempahan</h2>
-            <form id="orderForm">
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">Nama Anda</label>
-                    <input type="text" id="nama" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 bg-gray-50 p-2" placeholder="Ali Abu" required>
+        <section class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                <span class="bg-red-100 p-2 rounded-lg mr-3 text-red-600">📝</span>
+                Borang Tempahan
+            </h2>
+            
+            <form id="orderForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Penuh</label>
+                    <input type="text" id="nama" class="w-full p-3 rounded-xl border-gray-200 bg-gray-50 focus:ring-2 focus:ring-red-500 focus:bg-white outline-none transition-all" placeholder="Contoh: Ahmad" required>
                 </div>
 
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">No. Telefon</label>
-                    <input type="tel" id="tel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 bg-gray-50 p-2" placeholder="0123456789" required>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">No. WhatsApp</label>
+                    <input type="tel" id="whatsapp" class="w-full p-3 rounded-xl border-gray-200 bg-gray-50 focus:ring-2 focus:ring-red-500 focus:bg-white outline-none transition-all" placeholder="0123456789" required>
                 </div>
 
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">Pilih Bahagian</label>
-                    <select id="item" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 bg-gray-50 p-2">
-                        <option value="Batang Pinang">Daging Batang Pinang</option>
-                        <option value="Daging Biasa">Daging</option>
-                        <option value="Tulang">Tulang</option>
-                        <option value="Paru">Paru</option>
-                        <option value="Limpa">Limpa</option>
-                        <option value="Hati">Hati</option>
-                    </select>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Pilih Item</label>
+                        <select id="item" class="w-full p-3 rounded-xl border-gray-200 bg-gray-50 focus:ring-2 focus:ring-red-500 outline-none">
+                            <option>Daging Batang Pinang</option>
+                            <option>Daging Biasa</option>
+                            <option>Tulang</option>
+                            <option>Paru</option>
+                            <option>Limpa</option>
+                            <option>Hati</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Berat (KG)</label>
+                        <input type="number" id="berat" step="0.5" min="0.5" class="w-full p-3 rounded-xl border-gray-200 bg-gray-50 focus:ring-2 focus:ring-red-500 outline-none" placeholder="1.0" required>
+                    </div>
                 </div>
 
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700">Berat (KG)</label>
-                    <input type="number" id="berat" step="0.5" min="0.5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 bg-gray-50 p-2" placeholder="Contoh: 2" required>
-                </div>
-
-                <button type="submit" class="w-full bg-red-600 text-white font-bold py-3 rounded-xl hover:bg-red-700 shadow-md">
-                    Hantar Tempahan
+                <button type="submit" id="btnSubmit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95 mt-4">
+                    Hantar Tempahan Sekarang
                 </button>
             </form>
         </section>
     </main>
 
-    <footer class="fixed bottom-0 w-full bg-white border-t border-gray-100 p-4 text-center text-xs text-gray-400">
-        &copy; 2026 Jualan Daging Raya Management
-    </footer>
-
     <script>
-        // Sini nanti kita letak logic fetch data dari Google Sheets API
-        const SCRIPT_URL = 'URL_WEB_APP_GOOGLE_SCRIPT_ANDA';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbym2bXGuNwIhFXqfLB7dIChvRF4mKyiTUGMc8xeTDyfP1nxaHUclt9hpHt3vAjjhUZ-eg/exec';
 
-        document.getElementById('orderForm').addEventListener('submit', function(e) {
+        // 1. Ambil Data Stok
+        async function muatTurunStok() {
+            const container = document.getElementById('senarai-stok');
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'get_stok_daging' })
+                });
+                const data = await response.json();
+                
+                let html = '';
+                data.forEach(item => {
+                    const nama = item[0];
+                    const harga = item[1];
+                    const stokSemasa = item[3];
+                    const adaStok = stokSemasa > 0;
+
+                    html += `
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center card-daging">
+                            <div>
+                                <h3 class="font-bold text-gray-800">${nama}</h3>
+                                <p class="text-red-600 font-bold text-sm">RM ${harga} /KG</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] uppercase tracking-wider font-extrabold px-3 py-1 rounded-full ${adaStok ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                                    ${adaStok ? 'Tersedia: ' + stokSemasa + 'kg' : 'Habis'}
+                                </span>
+                            </div>
+                        </div>`;
+                });
+                container.innerHTML = html;
+            } catch (err) {
+                container.innerHTML = '<p class="text-center text-red-500 text-sm">Ralat memuatkan stok. Sila semak Apps Script.</p>';
+            }
+        }
+
+        // 2. Hantar Tempahan
+        document.getElementById('orderForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            alert('Fungsi hantar sedang disiapkan. Pastikan SCRIPT_URL telah diisi.');
+            const btn = document.getElementById('btnSubmit');
+            const originalText = btn.innerText;
+            
+            btn.disabled = true;
+            btn.innerText = "Sila tunggu...";
+
+            const payload = {
+                action: 'add_order_daging',
+                nama: document.getElementById('nama').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                item: document.getElementById('item').value,
+                berat: document.getElementById('berat').value
+            };
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.text();
+
+                if (result === "Success_Daging") {
+                    alert('✅ Tempahan berjaya direkodkan! Kami akan hubungi anda sebentar lagi.');
+                    document.getElementById('orderForm').reset();
+                } else {
+                    alert('❌ Ralat: ' + result);
+                }
+            } catch (err) {
+                alert('❌ Gagal menyambung ke pelayan. Sila cuba lagi.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
         });
+
+        // Jalankan semasa mula
+        muatTurunStok();
     </script>
 </body>
 </html>
