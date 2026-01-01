@@ -8,8 +8,8 @@
 </head>
 <body class="bg-slate-50 pb-10">
     <div class="bg-red-700 text-white pt-10 pb-20 px-6 rounded-b-[3rem] text-center shadow-lg">
-        <h1 class="text-3xl font-black italic uppercase italic">🥩 Segar Dari Ladang</h1>
-        <p class="opacity-80 text-[10px] mt-1 tracking-[0.3em] font-bold">TEMPAHAN RAYA HAJI 2026</p>
+        <h1 class="text-3xl font-black italic uppercase">🥩 Segar Dari Ladang</h1>
+        <p class="opacity-80 text-[10px] mt-1 tracking-[0.3em] font-bold uppercase">Sembelihan Raya Haji 2026</p>
     </div>
 
     <main class="max-w-md mx-auto px-4 -mt-12 space-y-6">
@@ -18,17 +18,17 @@
                 <span>💰 Harga & Stok Semasa</span>
                 <button onclick="muatData()" class="text-[10px] bg-red-50 text-red-600 px-3 py-1 rounded-full font-extrabold uppercase">Refresh</button>
             </h2>
-            <div id="senarai-stok" class="space-y-2"></div>
+            <div id="senarai-stok" class="space-y-2 text-center py-4 text-slate-400 italic">Memuatkan stok...</div>
         </div>
 
         <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
-            <h2 class="font-bold text-slate-800 mb-4 uppercase text-xs tracking-widest">📝 Borang Pesanan</h2>
+            <h2 class="font-bold text-slate-800 mb-4 uppercase text-xs tracking-widest text-center">📝 Borang Pesanan</h2>
             <form id="formOrder" class="space-y-3">
-                <input type="text" id="nama" placeholder="Nama Penuh" class="w-full p-4 rounded-2xl bg-slate-50 outline-none focus:ring-2 focus:ring-red-500 font-semibold text-sm" required>
-                <input type="tel" id="whatsapp" placeholder="No. WhatsApp (Contoh: 0123456789)" class="w-full p-4 rounded-2xl bg-slate-50 outline-none focus:ring-2 focus:ring-red-500 font-semibold text-sm" required>
+                <input type="text" id="nama" placeholder="Nama Penuh" class="w-full p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-semibold text-sm" required>
+                <input type="tel" id="whatsapp" placeholder="No. WhatsApp (Cth: 0123456789)" class="w-full p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-semibold text-sm" required>
                 <div class="grid grid-cols-2 gap-2">
-                    <select id="item" class="p-4 rounded-2xl bg-slate-50 outline-none focus:ring-2 focus:ring-red-500 font-bold text-slate-700 text-sm"></select>
-                    <input type="number" id="berat" step="0.5" placeholder="KG" class="p-4 rounded-2xl bg-slate-50 outline-none focus:ring-2 focus:ring-red-500 font-bold text-slate-700 text-sm" required>
+                    <select id="item" class="p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-bold text-slate-700 text-sm"></select>
+                    <input type="number" id="berat" step="0.5" placeholder="Berat (KG)" class="p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-bold text-slate-700 text-sm" required>
                 </div>
                 <button type="submit" id="btnHantar" class="w-full bg-red-700 text-white font-black py-5 rounded-2xl shadow-lg active:scale-95 transition-all uppercase tracking-widest">Hantar Tempahan</button>
             </form>
@@ -40,45 +40,52 @@
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                 </span>
-                Tempahan Terkini Dari Pelanggan
+                Log Tempahan Terkini
             </h2>
-            <div id="log-belian" class="space-y-3 text-[11px]"></div>
+            <div id="log-belian" class="space-y-3 text-[11px] opacity-80"></div>
         </div>
     </main>
 
     <script>
-        const API_URL = 'GANTI_DENGAN_URL_WEB_APP_ANDA';
+        // PASTIKAN URL INI BETUL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbym2bXGuNwIhFXqfLB7dIChvRF4mKyiTUGMc8xeTDyfP1nxaHUclt9hpHt3vAjjhUZ-eg/exec';
 
         async function muatData() {
             try {
                 const res = await fetch(API_URL);
                 const result = await res.json();
                 
-                // Paparan Stok
+                // 1. Papar Senarai Stok
                 let stokHtml = ''; let optHtml = '';
+                // Mengakses result.stok kerana struktur data baru
                 result.stok.forEach(row => {
                     const baki = parseFloat(row[3]) || 0;
-                    stokHtml += `<div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
+                    stokHtml += `
+                    <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
                         <div><p class="font-bold text-xs">${row[0]}</p><p class="text-red-600 font-black text-[10px]">RM ${row[1]}/KG</p></div>
-                        <span class="text-[9px] px-2 py-1 rounded-full font-black ${baki > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${baki > 0 ? baki + ' KG' : 'HABIS'}</span>
+                        <span class="text-[9px] px-2 py-1 rounded-full font-black ${baki > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                            ${baki > 0 ? baki + ' KG' : 'HABIS'}
+                        </span>
                     </div>`;
                     if(baki > 0) optHtml += `<option value="${row[0]}">${row[0]}</option>`;
                 });
                 document.getElementById('senarai-stok').innerHTML = stokHtml;
                 document.getElementById('item').innerHTML = optHtml;
 
-                // Log Tempahan Sebenar
+                // 2. Papar Log Tempahan Sebenar
                 document.getElementById('log-belian').innerHTML = result.log.length ? result.log.map(r => `
                     <div class="border-b border-slate-800 pb-2 flex justify-between">
                         <span>✅ <b>${r[1]}</b> menempah <span class="text-yellow-400">${r[4]}KG ${r[3]}</span></span>
                     </div>
-                `).join('') : '<p class="opacity-30 italic text-center">Tiada tempahan hari ini</p>';
-            } catch (e) { console.log("Ralat Fetch"); }
+                `).join('') : '<p class="opacity-30 italic text-center">Tiada tempahan direkodkan</p>';
+            } catch (e) { 
+                document.getElementById('senarai-stok').innerHTML = '<p class="text-red-500 text-xs font-bold">Ralat: Gagal memproses data.</p>';
+            }
         }
 
         document.getElementById('formOrder').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnHantar'); btn.disabled = true; btn.innerText = "MENEMPUNG DATA...";
+            const btn = document.getElementById('btnHantar'); btn.disabled = true; btn.innerText = "PROSES...";
             const payload = { 
                 nama: document.getElementById('nama').value, 
                 whatsapp: document.getElementById('whatsapp').value,
@@ -87,7 +94,7 @@
             };
             try {
                 await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                alert('Alhamdulillah! Tempahan anda berjaya.');
+                alert('Tempahan anda telah berjaya dihantar!');
                 location.reload();
             } catch (err) { alert('Gagal. Cuba lagi.'); btn.disabled = false; }
         });
