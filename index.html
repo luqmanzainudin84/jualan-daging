@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daging Raya App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-daging { transition: transform 0.2s; }
+        .card-daging:active { transform: scale(0.95); }
+    </style>
+</head>
+<body class="bg-gray-50 pb-20">
+
+    <header class="bg-red-700 text-white p-6 rounded-b-3xl shadow-lg mb-6">
+        <h1 class="text-2xl font-bold text-center">🥩 Jualan Daging Raya</h1>
+        <p class="text-center text-sm opacity-90">Tempah awal untuk raya yang lebih mudah!</p>
+    </header>
+
+    <main class="max-w-md mx-auto px-4">
+        <h2 class="text-lg font-bold mb-4 flex items-center">
+            <span class="mr-2">📦</span> Senarai Stok & Harga
+        </h2>
+        
+        <div id="senarai-stok" class="grid grid-cols-1 gap-4">
+            <p class="text-center text-gray-500 py-4">Memuatkan data stok...</p>
+        </div>
+
+        <hr class="my-8 border-gray-200">
+
+        <section id="tempahan" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h2 class="text-lg font-bold mb-4">📝 Borang Tempahan</h2>
+            <form id="orderForm">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Nama Anda</label>
+                    <input type="text" id="nama" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 bg-gray-50 p-2" placeholder="Ali Abu" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">No. Telefon</label>
+                    <input type="tel" id="tel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 bg-gray-50 p-2" placeholder="0123456789" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Pilih Bahagian</label>
+                    <select id="item" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 bg-gray-50 p-2">
+                        <option value="Batang Pinang">Daging Batang Pinang</option>
+                        <option value="Daging Biasa">Daging</option>
+                        <option value="Tulang">Tulang</option>
+                        <option value="Paru">Paru</option>
+                        <option value="Limpa">Limpa</option>
+                        <option value="Hati">Hati</option>
+                    </select>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700">Berat (KG)</label>
+                    <input type="number" id="berat" step="0.5" min="0.5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 bg-gray-50 p-2" placeholder="Contoh: 2" required>
+                </div>
+
+                <button type="submit" class="w-full bg-red-600 text-white font-bold py-3 rounded-xl hover:bg-red-700 shadow-md">
+                    Hantar Tempahan
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <footer class="fixed bottom-0 w-full bg-white border-t border-gray-100 p-4 text-center text-xs text-gray-400">
+        &copy; 2026 Jualan Daging Raya Management
+    </footer>
+
+    <script>
+        // Sini nanti kita letak logic fetch data dari Google Sheets API
+        const SCRIPT_URL = 'URL_WEB_APP_GOOGLE_SCRIPT_ANDA';
+
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Fungsi hantar sedang disiapkan. Pastikan SCRIPT_URL telah diisi.');
+        });
+    </script>
+</body>
+</html>
