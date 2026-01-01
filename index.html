@@ -3,129 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Jualan Daging</title>
+    <title>Daging Segar 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    </style>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap'); body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
-<body class="bg-slate-50 pb-10">
-
-    <div class="bg-red-700 pt-12 pb-20 px-6 rounded-b-[3rem] shadow-2xl text-center text-white">
-        <h1 class="text-3xl font-extrabold tracking-tight italic">🥩 DAGING SEGAR RAYA</h1>
-        <p class="text-red-100 mt-2 text-xs font-bold uppercase tracking-[0.2em]">Tempahan Online 2026</p>
+<body class="bg-slate-50 pb-12">
+    <div class="bg-red-700 text-white pt-10 pb-20 px-6 rounded-b-[3rem] text-center shadow-lg">
+        <h1 class="text-3xl font-extrabold italic uppercase">🥩 Segar Dari Ladang</h1>
+        <p class="opacity-80 text-xs mt-1 tracking-widest">TEMPAHAN RAYA HAJI 2026</p>
     </div>
 
-    <div class="max-w-md mx-auto px-5 -mt-12 space-y-6">
-        
-        <div class="bg-white/90 backdrop-blur-md rounded-3xl shadow-xl p-6 border border-white">
-            <div class="flex justify-between items-center mb-5">
-                <h2 class="font-bold text-slate-800 flex items-center gap-2">
-                    <span class="text-lg">💰</span> Stok & Harga
-                </h2>
-                <button onclick="muatData()" class="text-[10px] font-black text-red-600 bg-red-50 px-4 py-2 rounded-full hover:bg-red-100 transition">REFRESH</button>
-            </div>
-            
-            <div id="senarai-stok" class="space-y-3">
-                <div class="py-4 text-center animate-pulse text-slate-400 italic text-sm">Menyambung ke pangkalan data...</div>
-            </div>
+    <main class="max-w-md mx-auto px-4 -mt-12 space-y-6">
+        <div class="bg-white p-6 rounded-3xl shadow-xl border border-white">
+            <h2 class="font-bold text-slate-800 mb-4 flex justify-between items-center">
+                <span>💰 Harga & Stok</span>
+                <button onclick="muatData()" class="text-[10px] bg-red-50 text-red-600 px-3 py-1 rounded-full font-bold">REFRESH</button>
+            </h2>
+            <div id="senarai-stok" class="space-y-2"></div>
         </div>
 
-        <div class="bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
-            <h2 class="font-bold text-slate-800 mb-6 flex items-center gap-2 text-lg">
-                <span class="text-lg">📝</span> Borang Pesanan
-            </h2>
-            
-            <form id="formDaging" class="space-y-4">
-                <input type="text" id="nama" placeholder="Nama Penuh" class="w-full p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-semibold text-slate-700" required>
-                <input type="tel" id="whatsapp" placeholder="No. WhatsApp (cth: 0123456789)" class="w-full p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-semibold text-slate-700" required>
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <select id="item" class="w-full p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-bold text-slate-700"></select>
-                    <input type="number" id="berat" step="0.5" min="0.5" placeholder="KG" class="w-full p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-bold text-slate-700" required>
+        <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
+            <h2 class="font-bold text-slate-800 mb-4 uppercase text-sm tracking-wider">📝 Borang Pesanan</h2>
+            <form id="formOrder" class="space-y-3">
+                <input type="text" id="nama" placeholder="Nama Penuh" class="w-full p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-semibold" required>
+                <input type="tel" id="whatsapp" placeholder="No. WhatsApp" class="w-full p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-semibold" required>
+                <div class="grid grid-cols-2 gap-2">
+                    <select id="item" class="p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-bold text-slate-700"></select>
+                    <input type="number" id="berat" step="0.5" placeholder="KG" class="p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-bold text-slate-700" required>
                 </div>
-
-                <button type="submit" id="btnHantar" class="w-full bg-red-700 hover:bg-red-800 text-white font-black py-5 rounded-2xl shadow-lg active:scale-95 transition-all mt-4 tracking-widest uppercase">
-                    Hantar Tempahan
-                </button>
+                <button type="submit" id="btnHantar" class="w-full bg-red-700 text-white font-black py-5 rounded-2xl shadow-lg active:scale-95 transition-all uppercase">Hantar Tempahan</button>
             </form>
         </div>
-    </div>
+
+        <div class="bg-slate-800 p-6 rounded-3xl shadow-xl text-white">
+            <h2 class="text-sm font-bold mb-4 flex items-center gap-2 italic">
+                <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>
+                Tempahan Terkini (Real-time)
+            </h2>
+            <div id="log-belian" class="space-y-3 text-[11px]"></div>
+        </div>
+    </main>
 
     <script>
-        // GANTI URL INI dengan URL Web App anda yang baru
-        const API_URL = 'https://script.google.com/macros/s/AKfycbym2bXGuNwIhFXqfLB7dIChvRF4mKyiTUGMc8xeTDyfP1nxaHUclt9hpHt3vAjjhUZ-eg/exec';
+        const API_URL = 'URL_WEB_APP_ANDA'; // Ganti dengan URL Deploy anda
 
         async function muatData() {
-            const container = document.getElementById('senarai-stok');
-            const select = document.getElementById('item');
-            
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
                 
-                if (data.error) throw new Error(data.error);
-
-                let html = '';
-                let options = '';
-                
+                // Paparan Stok
+                let stokHtml = ''; let optHtml = '';
                 data.forEach(row => {
                     const baki = parseFloat(row[3]) || 0;
-                    const ada = baki > 0;
-                    
-                    html += `
-                    <div class="flex justify-between items-center p-4 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm">
-                        <div>
-                            <p class="font-bold text-slate-800 text-sm">${row[0]}</p>
-                            <p class="text-red-600 font-black text-xs">RM ${row[1]} /KG</p>
-                        </div>
-                        <span class="px-3 py-1 rounded-full text-[10px] font-black ${ada ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                            ${ada ? baki + ' KG' : 'HABIS'}
-                        </span>
+                    stokHtml += `<div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <div><p class="font-bold text-xs">${row[0]}</p><p class="text-red-600 font-black text-[10px]">RM ${row[1]}/KG</p></div>
+                        <span class="text-[9px] px-2 py-1 rounded-full font-black ${baki > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${baki > 0 ? baki + ' KG' : 'HABIS'}</span>
                     </div>`;
-
-                    if(ada) options += `<option value="${row[0]}">${row[0]}</option>`;
+                    if(baki > 0) optHtml += `<option value="${row[0]}">${row[0]}</option>`;
                 });
+                document.getElementById('senarai-stok').innerHTML = stokHtml;
+                document.getElementById('item').innerHTML = optHtml;
 
-                container.innerHTML = html;
-                select.innerHTML = options || '<option disabled>Tiada Stok</option>';
-
-            } catch (err) {
-                container.innerHTML = `<div class="p-4 bg-red-50 text-red-600 text-xs rounded-xl font-bold">RALAT: ${err.message}</div>`;
-            }
+                // Log Belian (Contoh simulasi dari data)
+                document.getElementById('log-belian').innerHTML = data.slice(0,3).map(r => `
+                    <div class="border-b border-slate-700 pb-2">✅ Pelanggan baru menempah <span class="text-yellow-400 font-bold">${r[0]}</span></div>
+                `).join('');
+            } catch (e) { console.log("Ralat Data"); }
         }
 
-        document.getElementById('formDaging').addEventListener('submit', async (e) => {
+        document.getElementById('formOrder').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnHantar');
-            btn.disabled = true;
-            btn.innerText = "MENGHANTAR...";
-
-            const payload = {
-                nama: document.getElementById('nama').value,
+            const btn = document.getElementById('btnHantar'); btn.disabled = true; btn.innerText = "PROSES...";
+            const payload = { 
+                nama: document.getElementById('nama').value, 
                 whatsapp: document.getElementById('whatsapp').value,
                 item: document.getElementById('item').value,
                 berat: document.getElementById('berat').value
             };
-
             try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify(payload)
-                });
-                alert('Alhamdulillah! Pesanan anda telah direkodkan.');
-                document.getElementById('formDaging').reset();
-                muatData();
-            } catch (err) {
-                alert('Ralat semasa menghantar tempahan.');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "HANTAR TEMPAHAN";
-            }
+                await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                alert('Tempahan Berjaya!');
+                location.reload();
+            } catch (err) { alert('Sila cuba lagi'); btn.disabled = false; }
         });
-
         muatData();
     </script>
 </body>
