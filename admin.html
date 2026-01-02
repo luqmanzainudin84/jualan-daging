@@ -3,75 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin Daging</title>
+    <title>Admin Daging 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
-<body class="bg-gray-950 text-gray-200 p-4 md:p-10">
+<body class="bg-gray-950 text-gray-200 p-4 md:p-8">
     <div class="max-w-5xl mx-auto">
-        <header class="flex justify-between items-center mb-10 border-b border-gray-800 pb-6">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
             <div>
-                <h1 class="text-2xl font-black text-red-500 uppercase tracking-tighter">Admin Dashboard</h1>
-                <p class="text-[10px] text-gray-500 font-mono tracking-widest uppercase">Pangkalan Data Live</p>
+                <h1 class="text-3xl font-black text-red-600 uppercase tracking-tighter italic">ADMIN PANEL</h1>
+                <p class="text-[10px] text-gray-500 font-bold tracking-widest">PENGURUSAN STOK & TEMPAHAN FULL</p>
             </div>
-            <button onclick="location.reload()" class="bg-gray-800 px-5 py-2 rounded-xl text-xs font-bold border border-gray-700 hover:bg-gray-700 transition">REFRESH</button>
+            <button onclick="location.reload()" class="bg-gray-900 px-6 py-3 rounded-2xl text-xs font-bold border border-gray-800 hover:bg-gray-800 transition-all shadow-xl shadow-black">REFRESH SEMUA DATA</button>
         </header>
 
-        <h2 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-4">Ringkasan Stok</h2>
         <div id="admin-stok" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12"></div>
 
-        <h2 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-4">Tempahan Pelanggan (10 Terkini)</h2>
-        <div class="bg-gray-900 rounded-3xl border border-gray-800 overflow-hidden shadow-2xl">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                    <thead class="bg-gray-800 text-gray-400 uppercase text-[10px] tracking-widest">
-                        <tr>
-                            <th class="p-5">Pelanggan</th>
-                            <th class="p-5">Pesanan</th>
-                            <th class="p-5 text-center">Berat</th>
-                            <th class="p-5 text-center">Hubungi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="jadual-tempahan" class="divide-y divide-gray-800">
-                        <tr><td colspan="4" class="p-10 text-center italic text-gray-600">Memuatkan tempahan...</td></tr>
-                    </tbody>
-                </table>
-            </div>
+        <h2 class="text-xs font-black uppercase tracking-[0.3em] text-gray-600 mb-6 flex items-center gap-2">
+            <span class="w-8 h-[1px] bg-gray-800"></span> SENARAI TEMPAHAN MASUK (FULL)
+        </h2>
+        
+        <div id="full-list-tempahan" class="space-y-4">
+            <div class="text-center py-20 animate-pulse text-gray-700 italic">Menghubungi pengkalan data...</div>
         </div>
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbym2bXGuNwIhFXqfLB7dIChvRF4mKyiTUGMc8xeTDyfP1nxaHUclt9hpHt3vAjjhUZ-eg/exec';
+        const API_URL = 'GANTI_DENGAN_URL_WEB_APP_ANDA';
+
+        async function updateStatus(type, realIndex) {
+            const label = type === 'bayar' ? 'BAYARAN SELESAI' : 'DAGING DIAMBIL';
+            if(!confirm(`Sahkan status ${label}?`)) return;
+            
+            try {
+                const payload = { action: "updateStatus", type: type, realIndex: realIndex };
+                await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                alert('Berjaya dikemaskini!');
+                muatAdmin();
+            } catch(e) { alert('Ralat kemaskini'); }
+        }
 
         async function muatAdmin() {
             try {
                 const res = await fetch(API_URL);
                 const result = await res.json();
                 
-                // 1. Papar Kotak Stok
+                // 1. Stok
                 document.getElementById('admin-stok').innerHTML = result.stok.map(row => `
-                    <div class="bg-gray-900 p-5 rounded-2xl border border-gray-800">
-                        <p class="text-gray-500 font-bold text-[9px] uppercase mb-1">${row[0]}</p>
-                        <div class="flex justify-between items-end">
-                            <span class="text-xl font-black text-white">${row[3]} <small class="text-[10px]">KG</small></span>
-                        </div>
+                    <div class="bg-gray-900 p-6 rounded-[2rem] border border-gray-800 shadow-lg">
+                        <p class="text-gray-500 font-bold text-[9px] uppercase tracking-wider mb-2">${row[0]}</p>
+                        <p class="text-2xl font-black text-white">${row[3]} <span class="text-[10px] text-gray-600">KG</span></p>
                     </div>
                 `).join('');
 
-                // 2. Papar Jadual Tempahan
-                document.getElementById('jadual-tempahan').innerHTML = result.log.length ? result.log.map(row => `
-                    <tr class="hover:bg-gray-800/30 transition">
-                        <td class="p-5">
-                            <p class="font-bold text-white text-sm">${row[1]}</p>
-                            <p class="text-gray-500 font-mono text-[10px]">${row[2]}</p>
-                        </td>
-                        <td class="p-5 text-gray-300 font-medium">${row[3]}</td>
-                        <td class="p-5 text-center font-black text-red-500 text-sm">${row[4]} KG</td>
-                        <td class="p-5 text-center">
-                            <a href="https://wa.me/6${row[2].replace(/\D/g,'')}" target="_blank" class="inline-block bg-green-600/10 text-green-500 px-4 py-2 rounded-lg text-[10px] font-bold border border-green-600/20 hover:bg-green-600 hover:text-white transition">WhatsApp</a>
-                        </td>
-                    </tr>
-                `).join('') : '<tr><td colspan="4" class="p-10 text-center text-gray-600">Tiada rekod tempahan.</td></tr>';
-            } catch (e) { console.error("Ralat Admin"); }
+                // 2. Tempahan Full
+                // result.log sudah direverse dalam Code.gs
+                document.getElementById('full-list-tempahan').innerHTML = result.log.map((row, i) => {
+                    const realIdx = result.log.length - 1 - i;
+                    const paid = row[5] === "Selesai";
+                    const taken = row[6] === "Selesai";
+                    
+                    return `
+                    <div class="bg-gray-900 p-6 rounded-[2.5rem] border border-gray-800 shadow-2xl relative overflow-hidden transition-all hover:border-gray-700">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-lg font-black text-white">${row[1]}</h3>
+                                <p class="text-gray-500 font-mono text-[11px] mt-1">${row[2]}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="block text-xl font-black text-red-500">${row[4]} KG</span>
+                                <span class="text-[9px] font-bold text-gray-600 uppercase tracking-tighter">${row[3]}</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mt-6">
+                            <a href="https://wa.me/6${row[2].replace(/\D/g,'')}" target="_blank" class="bg-green-600/10 text-green-500 text-center py-3 rounded-2xl text-[10px] font-black border border-green-600/20 hover:bg-green-600 hover:text-white transition-all">WHATSAPP</a>
+                            <a href="tel:${row[2]}" class="bg-blue-600/10 text-blue-500 text-center py-3 rounded-2xl text-[10px] font-black border border-blue-600/20 hover:bg-blue-600 hover:text-white transition-all">CALL SEKARANG</a>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mt-3">
+                            <button onclick="updateStatus('bayar', ${realIdx})" ${paid ? 'disabled' : ''} 
+                                class="py-4 rounded-2xl text-[10px] font-black border transition-all
+                                ${paid ? 'bg-green-600 border-green-600 text-white' : 'bg-transparent border-gray-800 text-gray-600 hover:border-gray-500'}">
+                                ${paid ? '✅ DAH BAYAR' : 'BELUM BAYAR'}
+                            </button>
+                            <button onclick="updateStatus('ambil', ${realIdx})" ${taken ? 'disabled' : ''}
+                                class="py-4 rounded-2xl text-[10px] font-black border transition-all
+                                ${taken ? 'bg-orange-600 border-orange-600 text-white' : 'bg-transparent border-gray-800 text-gray-600 hover:border-gray-500'}">
+                                ${taken ? '✅ DAH AMBIL' : 'BELUM AMBIL'}
+                            </button>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            } catch (e) { console.error(e); }
         }
         muatAdmin();
     </script>
