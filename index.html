@@ -8,8 +8,8 @@
 </head>
 <body class="bg-slate-50 pb-10">
     <div class="bg-red-700 text-white pt-10 pb-20 px-6 rounded-b-[3rem] text-center shadow-lg">
-        <h1 class="text-3xl font-black italic uppercase">🥩 Segar Dari Ladang</h1>
-        <p class="opacity-80 text-[10px] mt-1 tracking-[0.3em] font-bold uppercase">Sembelihan Raya Haji 2026</p>
+        <h1 class="text-3xl font-black italic uppercase text-white">🥩 Segar Dari Ladang</h1>
+        <p class="opacity-80 text-[10px] mt-1 tracking-[0.3em] font-bold uppercase text-white">Sembelihan Raya Haji 2026</p>
     </div>
 
     <main class="max-w-md mx-auto px-4 -mt-12 space-y-6">
@@ -24,11 +24,11 @@
         <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
             <h2 class="font-bold text-slate-800 mb-4 uppercase text-xs tracking-widest text-center">📝 Borang Pesanan</h2>
             <form id="formOrder" class="space-y-3">
-                <input type="text" id="nama" placeholder="Nama Penuh" class="w-full p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-semibold text-sm shadow-inner" required>
-                <input type="tel" id="whatsapp" placeholder="No. WhatsApp (Cth: 0123456789)" class="w-full p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-semibold text-sm shadow-inner" required>
+                <input type="text" id="nama" placeholder="Nama Penuh" class="w-full p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-semibold text-sm shadow-inner text-slate-800" required>
+                <input type="tel" id="whatsapp" placeholder="No. WhatsApp (Cth: 0123456789)" class="w-full p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-semibold text-sm shadow-inner text-slate-800" required>
                 <div class="grid grid-cols-2 gap-2">
                     <select id="item" class="p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-bold text-slate-700 text-sm shadow-inner"></select>
-                    <input type="number" id="berat" step="0.5" placeholder="Berat (KG)" class="p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-bold text-slate-700 text-sm shadow-inner" required>
+                    <input type="number" id="berat" step="0.5" placeholder="Berat (KG)" class="p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-red-500 font-bold text-slate-700 text-sm shadow-inner text-slate-800" required>
                 </div>
                 <button type="submit" id="btnHantar" class="w-full bg-red-700 text-white font-black py-5 rounded-2xl shadow-lg active:scale-95 transition-all uppercase tracking-widest mt-2">Hantar Tempahan</button>
             </form>
@@ -40,14 +40,14 @@
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                 </span>
-                Log Tempahan Terkini
+                Tempahan Terkini Pelanggan
             </h2>
-            <div id="log-belian" class="space-y-3 text-[11px] opacity-80"></div>
+            <div id="log-belian" class="space-y-3 text-[11px] opacity-80 text-white"></div>
         </div>
     </main>
 
     <script>
-        const API_URL = 'GANTI_DENGAN_URL_WEB_APP_ANDA';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbym2bXGuNwIhFXqfLB7dIChvRF4mKyiTUGMc8xeTDyfP1nxaHUclt9hpHt3vAjjhUZ-eg/exec';
 
         async function muatData() {
             try {
@@ -59,7 +59,7 @@
                     const baki = parseFloat(row[3]) || 0;
                     stokHtml += `
                     <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <div><p class="font-bold text-xs">${row[0]}</p><p class="text-red-600 font-black text-[10px]">RM ${row[1]}/KG</p></div>
+                        <div><p class="font-bold text-xs text-slate-800">${row[0]}</p><p class="text-red-600 font-black text-[10px]">RM ${row[1]}/KG</p></div>
                         <span class="text-[9px] px-2 py-1 rounded-full font-black ${baki > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
                             ${baki > 0 ? baki + ' KG' : 'HABIS'}
                         </span>
@@ -69,12 +69,11 @@
                 document.getElementById('senarai-stok').innerHTML = stokHtml;
                 document.getElementById('item').innerHTML = optHtml;
 
-                // Membetulkan ralat undefined dengan merujuk key r.nama, r.item, r.berat
                 document.getElementById('log-belian').innerHTML = result.log.length ? result.log.slice(-10).reverse().map(r => `
                     <div class="border-b border-slate-800 pb-2 flex justify-between">
                         <span>✅ <b>${r.nama}</b> menempah <span class="text-yellow-400 font-bold">${r.berat}KG ${r.item}</span></span>
                     </div>
-                `).join('') : '<p class="opacity-30 italic text-center">Tiada tempahan direkodkan</p>';
+                `).join('') : '<p class="opacity-30 italic text-center text-white">Tiada tempahan direkodkan</p>';
             } catch (e) { 
                 document.getElementById('senarai-stok').innerHTML = '<p class="text-red-500 text-xs font-bold text-center">Gagal memuatkan data.</p>';
             }
