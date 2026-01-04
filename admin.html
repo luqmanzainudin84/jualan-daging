@@ -3,45 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Daging 2026</title>
+    <title>Admin Dashboard - Grouping</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
 <body class="bg-gray-950 text-gray-200 p-4 md:p-8">
-    <div class="max-w-5xl mx-auto">
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-            <div>
-                <h1 class="text-3xl font-black text-red-600 uppercase tracking-tighter italic">ADMIN PANEL</h1>
-                <p class="text-[10px] text-gray-500 font-bold tracking-widest">PENGURUSAN STOK & TEMPAHAN FULL</p>
-            </div>
-            <button onclick="location.reload()" class="bg-gray-900 px-6 py-3 rounded-2xl text-xs font-bold border border-gray-800 hover:bg-gray-800 transition-all shadow-xl shadow-black">REFRESH SEMUA DATA</button>
+    <div class="max-w-4xl mx-auto">
+        <header class="flex justify-between items-center mb-10 border-b border-gray-800 pb-6">
+            <h1 class="text-2xl font-black text-red-600 italic uppercase">Admin Panel (Combined)</h1>
+            <button onclick="location.reload()" class="bg-gray-800 px-4 py-2 rounded-xl text-xs font-bold border border-gray-700">REFRESH</button>
         </header>
 
-        <div id="admin-stok" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12"></div>
+        <div id="admin-stok" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10"></div>
 
-        <h2 class="text-xs font-black uppercase tracking-[0.3em] text-gray-600 mb-6 flex items-center gap-2">
-            <span class="w-8 h-[1px] bg-gray-800"></span> SENARAI TEMPAHAN MASUK (FULL)
-        </h2>
-        
-        <div id="full-list-tempahan" class="space-y-4">
-            <div class="text-center py-20 animate-pulse text-gray-700 italic">Menghubungi pengkalan data...</div>
+        <h2 class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-6">Senarai Pesanan Mengikut Pelanggan</h2>
+        <div id="full-list-tempahan" class="space-y-6">
+            <p class="text-center py-20 animate-pulse text-gray-700">Menyusun data pelanggan...</p>
         </div>
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbym2bXGuNwIhFXqfLB7dIChvRF4mKyiTUGMc8xeTDyfP1nxaHUclt9hpHt3vAjjhUZ-eg/exec';
+        const API_URL = 'GANTI_DENGAN_URL_WEB_APP_ANDA';
 
-        async function updateStatus(type, realIndex) {
-            const label = type === 'bayar' ? 'BAYARAN SELESAI' : 'DAGING DIAMBIL';
-            if(!confirm(`Sahkan status ${label}?`)) return;
+        async function updateStatus(type, realIndexes) {
+            const label = type === 'bayar' ? 'BAYARAN' : 'PENGAMBILAN';
+            if(!confirm(`Sahkan semua item untuk pelanggan ini telah ${label}?`)) return;
             
-            try {
-                const payload = { action: "updateStatus", type: type, realIndex: realIndex };
+            // Loop untuk update setiap baris tempahan yang dikaitkan dengan nama tersebut
+            for (let idx of realIndexes) {
+                const payload = { action: "updateStatus", type: type, realIndex: idx };
                 await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                alert('Berjaya dikemaskini!');
-                muatAdmin();
-            } catch(e) { alert('Ralat kemaskini'); }
+            }
+            alert('Status dikemaskini!');
+            muatAdmin();
         }
 
         async function muatAdmin() {
@@ -49,54 +42,85 @@
                 const res = await fetch(API_URL);
                 const result = await res.json();
                 
-                // 1. Stok
+                // 1. Papar Stok Ringkas
                 document.getElementById('admin-stok').innerHTML = result.stok.map(row => `
-                    <div class="bg-gray-900 p-6 rounded-[2rem] border border-gray-800 shadow-lg">
-                        <p class="text-gray-500 font-bold text-[9px] uppercase tracking-wider mb-2">${row[0]}</p>
-                        <p class="text-2xl font-black text-white">${row[3]} <span class="text-[10px] text-gray-600">KG</span></p>
+                    <div class="bg-gray-900 p-4 rounded-2xl border border-gray-800 text-center">
+                        <p class="text-[9px] text-gray-500 font-bold mb-1">${row[0]}</p>
+                        <p class="text-lg font-black">${row[3]} KG</p>
                     </div>
                 `).join('');
 
-                // 2. Tempahan Full
-                // result.log sudah direverse dalam Code.gs
-                document.getElementById('full-list-tempahan').innerHTML = result.log.map((row, i) => {
-                    const realIdx = result.log.length - 1 - i;
-                    const paid = row[5] === "Selesai";
-                    const taken = row[6] === "Selesai";
-                    
+                // 2. LOGIK COMBINE ORDER
+                const grouped = {};
+                result.log.forEach(item => {
+                    if (!grouped[item.whatsapp]) {
+                        grouped[item.whatsapp] = {
+                            nama: item.nama,
+                            items: [],
+                            totalHarga: 0,
+                            allPaid: true,
+                            allTaken: true,
+                            indexes: []
+                        };
+                    }
+                    const subTotal = parseFloat(item.berat) * parseFloat(item.hargaPerKg);
+                    grouped[item.whatsapp].items.push({
+                        detail: `${item.berat}KG ${item.item}`,
+                        subTotal: subTotal
+                    });
+                    grouped[item.whatsapp].totalHarga += subTotal;
+                    grouped[item.whatsapp].indexes.push(item.realIndex);
+                    if(item.bayar !== "Selesai") grouped[item.whatsapp].allPaid = false;
+                    if(item.ambil !== "Selesai") grouped[item.whatsapp].allTaken = false;
+                });
+
+                // 3. Papar Data Terkumpul
+                const listContainer = document.getElementById('full-list-tempahan');
+                listContainer.innerHTML = Object.keys(grouped).map(wa => {
+                    const p = grouped[wa];
                     return `
-                    <div class="bg-gray-900 p-6 rounded-[2.5rem] border border-gray-800 shadow-2xl relative overflow-hidden transition-all hover:border-gray-700">
-                        <div class="flex justify-between items-start">
+                    <div class="bg-gray-900 p-6 rounded-[2.5rem] border ${p.allPaid && p.allTaken ? 'border-green-900/50 opacity-60' : 'border-gray-800'} shadow-2xl relative overflow-hidden">
+                        <div class="flex justify-between items-start border-b border-gray-800 pb-4 mb-4">
                             <div>
-                                <h3 class="text-lg font-black text-white">${row[1]}</h3>
-                                <p class="text-gray-500 font-mono text-[11px] mt-1">${row[2]}</p>
+                                <h3 class="text-xl font-black text-white">${p.nama}</h3>
+                                <p class="text-blue-500 font-mono text-xs">${wa}</p>
                             </div>
                             <div class="text-right">
-                                <span class="block text-xl font-black text-red-500">${row[4]} KG</span>
-                                <span class="text-[9px] font-bold text-gray-600 uppercase tracking-tighter">${row[3]}</span>
+                                <p class="text-[10px] text-gray-500 font-bold uppercase">Jumlah Perlu Bayar</p>
+                                <p class="text-2xl font-black text-red-500">RM ${p.totalHarga.toFixed(2)}</p>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-3 mt-6">
-                            <a href="https://wa.me/6${row[2].replace(/\D/g,'')}" target="_blank" class="bg-green-600/10 text-green-500 text-center py-3 rounded-2xl text-[10px] font-black border border-green-600/20 hover:bg-green-600 hover:text-white transition-all">WHATSAPP</a>
-                            <a href="tel:${row[2]}" class="bg-blue-600/10 text-blue-500 text-center py-3 rounded-2xl text-[10px] font-black border border-blue-600/20 hover:bg-blue-600 hover:text-white transition-all">CALL SEKARANG</a>
+                        <div class="space-y-2 mb-6">
+                            ${p.items.map(i => `
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-400 font-medium">📦 ${i.detail}</span>
+                                    <span class="text-gray-500 font-mono">RM ${i.subTotal.toFixed(2)}</span>
+                                </div>
+                            `).join('')}
                         </div>
 
-                        <div class="grid grid-cols-2 gap-3 mt-3">
-                            <button onclick="updateStatus('bayar', ${realIdx})" ${paid ? 'disabled' : ''} 
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <a href="https://wa.me/6${wa.replace(/\D/g,'')}" target="_blank" class="bg-green-600/10 text-green-500 text-center py-3 rounded-2xl text-[10px] font-black border border-green-600/20">WHATSAPP</a>
+                            <a href="tel:${wa}" class="bg-blue-600/10 text-blue-400 text-center py-3 rounded-2xl text-[10px] font-black border border-blue-600/20">CALL</a>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="updateStatus('bayar', [${p.indexes}])" ${p.allPaid ? 'disabled' : ''} 
                                 class="py-4 rounded-2xl text-[10px] font-black border transition-all
-                                ${paid ? 'bg-green-600 border-green-600 text-white' : 'bg-transparent border-gray-800 text-gray-600 hover:border-gray-500'}">
-                                ${paid ? '✅ DAH BAYAR' : 'BELUM BAYAR'}
+                                ${p.allPaid ? 'bg-green-600 border-green-600 text-white' : 'bg-transparent border-gray-800 text-gray-500'}">
+                                ${p.allPaid ? '✅ BAYARAN SELESAI' : 'TANDA DAH BAYAR'}
                             </button>
-                            <button onclick="updateStatus('ambil', ${realIdx})" ${taken ? 'disabled' : ''}
+                            <button onclick="updateStatus('ambil', [${p.indexes}])" ${p.allTaken ? 'disabled' : ''}
                                 class="py-4 rounded-2xl text-[10px] font-black border transition-all
-                                ${taken ? 'bg-orange-600 border-orange-600 text-white' : 'bg-transparent border-gray-800 text-gray-600 hover:border-gray-500'}">
-                                ${taken ? '✅ DAH AMBIL' : 'BELUM AMBIL'}
+                                ${p.allTaken ? 'bg-orange-600 border-orange-600 text-white' : 'bg-transparent border-gray-800 text-gray-500'}">
+                                ${p.allTaken ? '✅ DIAMBIL SELESAI' : 'TANDA DAH AMBIL'}
                             </button>
                         </div>
                     </div>
                     `;
                 }).join('');
+
             } catch (e) { console.error(e); }
         }
         muatAdmin();
